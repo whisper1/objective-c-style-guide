@@ -212,7 +212,7 @@ UIButton *setBut;
 
 The prefix `W` should always be used for class names and constants, however may be omitted for Core Data entity names.
 
-Constants should be camel-case with all words capitalized and prefixed by the related class name for clarity. When implementing mocks, any UI constant values (dimensions, color values, animation durations) should not be hardcoded, but declared as constants in the implementation file. *Exception: In the case of different RGB values, those may be hardcoded until we devise some sort of tuple scheme.*
+Constants should be camel-case with all words capitalized and prefixed by the related class name for clarity.
 
 Double values should always have a decimal and should end in `0`. Float values should always have a decimal and end in `0f`.
 
@@ -280,16 +280,16 @@ Variables should be named as descriptively as possible. Single letter variable n
 
 Asterisks indicating pointers belong with the variable, e.g., `NSString *text` not `NSString* text` or `NSString * text`, except in the case of constants.
 
-[Private properties](#private-properties) should be used in place of instance variables whenever possible. Although using instance variables is a valid way of doing things, by agreeing to prefer properties our code will be more consistent. 
+[Private properties](#private-properties) should be used in place of instance variables at all times. Although using instance variables is a valid way of doing things, by agreeing to prefer properties our code will be more consistent.
 
-Direct access to instance variables that 'back' properties should be avoided except in initializer methods (`init`, `initWithCoder:`, etc…), `dealloc` methods and within custom setters and getters. For more information on using Accessor Methods in Initializer Methods and dealloc, see [here](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmPractical.html#//apple_ref/doc/uid/TP40004447-SW6).
+The only time a property should be publicly declared in the interface file is if another class absolutely must have access to it, and should only be `readwrite` if absolutely necessary, as well.
 
 **Preferred:**
 
 ```objc
 @interface RWTTutorial : NSObject
 
-@property (strong, nonatomic) NSString *tutorialName;
+@property (nonatomic, strong) NSString *tutorialName;
 
 @end
 ```
@@ -329,6 +329,8 @@ The access permission attribute should always be included in the interface file 
 Properties with mutable counterparts (e.g. NSString) should prefer `copy` instead of `strong`. 
 Why? Even if you declared a property as `NSString` somebody might pass in an instance of an `NSMutableString` and then change it without you noticing that. *Exception: Pretty much all of our code. Don't set mutable counterparts when the property calls for the nonmutable version.*
 
+Always use the `weak` attribute type when possible, particularly when dealing with UI elements. The only time a child view controller property should be `strong` is if it will be removed from its parent controller and added again later, with the expectation that it maintains its state. The same goes for `UIView` subclasses.
+
 ## Dot-Notation Syntax
 
 Dot syntax is purely a convenient wrapper around accessor method calls. When you use dot syntax, the property is still accessed or changed using getter and setter methods.  Read more [here](https://developer.apple.com/library/ios/documentation/cocoa/conceptual/ProgrammingWithObjectiveC/EncapsulatingData/EncapsulatingData.html)
@@ -358,12 +360,16 @@ UIApplication.sharedApplication.delegate;
 
 ```objc
 NSArray *names = @[@"Brian", @"Matt", @"Chris", @"Alex", @"Steve", @"Paul"];
-NSDictionary *productManagers = @{@"iPhone":@"Kate", @"iPad":@"Kamal", @"Mobile Web":@"Bill"};
+NSDictionary *projectManagers = @{@"iPhone":@"Kate", @"iPad":@"Kamal", @"Mobile Web":@"Bill"};
 NSNumber *shouldUseLiterals = @YES;
 NSNumber *buildingStreetNumber = @10018;
 
-NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithDictionary:productManagers];
+NSMutableDictionary *productManagers = [NSMutableDictionary dictionaryWithDictionary:productManagers];
 
+NSString *mendy = [WMendyManager isGoingOutOfTown] ? @"Mendy" : nil;
+if (mendy) {	
+    properties[@"Mixpanel"] = mendy;
+}
 ```
 
 **Not Preferred:**
@@ -377,20 +383,33 @@ NSNumber *buildingStreetNumber = [NSNumber numberWithInteger:10018];
 
 ## Constants
 
-Constants are preferred over in-line string literals or numbers, as they allow for easy reproduction of commonly used variables and can be quickly changed without the need for find and replace. Constants should be declared as `static` constants and not `#define`s unless explicitly being used as a macro.
+Constants are preferred over in-line string literals or numbers, as they allow for easy reproduction of commonly used variables and can be quickly changed without the need for find and replace. Constants should be declared as `static` constants and not `#define`s unless explicitly being used as a macro. If a constant must be declared in a class's interface file, use `extern` and define the constant in the implementation file.
+
+Use the processor-agnostic data type typedefs whenever appropriate (i.e. almost always). In addition to ensuring equivalent performance on 32- and 64-bit architectures, they indicate what the constant will be used for:
+* `NSInteger` instead of `int`
+* `NSUInteger` instead of `unsigned_int`
+* `CGFloat` instead of `float`
+* `NSTimeInterval` or `CLLocationDistance` instead of `double`
+* etc.
+
+**Note, this applies to [Variables](#variables) as well.**
+
+When implementing mocks, any UI constant values (dimensions, color values, animation durations) should not be hardcoded, but declared as constants in the implementation file. *Exception: In the case of different RGB values, those may be hardcoded until we devise some sort of tuple scheme.*
 
 **Preferred:**
 
 ```objc
-static NSString * const RWTAboutViewControllerCompanyName = @"RayWenderlich.com";
+static NSString *const WWhisperWebsiteName = @"whisper.sh";
 
-static CGFloat const RWTImageThumbnailHeight = 50.0;
+static CGFloat const WWhisperSearchBarStyle7BDefaultHeight = 50.0f;
+
+extern NSString *const WUserSettingsUpdatedNotificationName;
 ```
 
 **Not Preferred:**
 
 ```objc
-#define CompanyName @"RayWenderlich.com"
+#define CompanyName @"WhisperText, Inc."
 
 #define thumbnailHeight 2
 ```
