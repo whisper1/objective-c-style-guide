@@ -74,43 +74,50 @@ UIColor *myColour = [UIColor whiteColor];
 Use `#pragma mark -` to categorize methods in functional groupings and protocol/delegate implementations following this general structure.
 
 ```objc
-#pragma mark - Lifecycle
 
-- (instancetype)init {}
-- (void)dealloc {}
-- (void)viewDidLoad {}
-- (void)viewWillAppear:(BOOL)animated {}
-- (void)didReceiveMemoryWarning {}
+@interface WWhateverViewController () <FirstProtocol, SecondProtocol>
 
-#pragma mark - Custom Accessors
+@property (nonatomic, strong) id customProperty;
 
-- (void)setCustomProperty:(id)value {}
-- (id)customProperty {}
+@end
 
-#pragma mark - IBActions
+#pragma mark - Class
 
-- (IBAction)submitData:(id)sender {}
++(instancetype)whatever {}
+
+#pragma mark - Initialization
+
+-(instancetype)init {}
+
+// Subclass Specific Methods
+
+#pragma mark - UIViewController
+
+-(void)viewDidLoad {}
+-(void)viewWillAppear:(BOOL)animated {}
+-(void)didReceiveMemoryWarning {}
 
 #pragma mark - Public
 
-- (void)publicMethod {}
+-(void)publicMethod {}
 
 #pragma mark - Private
 
-- (void)privateMethod {}
+-(void)privateMethod {}
 
-#pragma mark - Protocol conformance
-#pragma mark - UITextFieldDelegate
-#pragma mark - UITableViewDataSource
-#pragma mark - UITableViewDelegate
+// Protocols
 
-#pragma mark - NSCopying
+#pragma mark - <FirstProtocol>
+#pragma mark - <SecondProtocol>
 
-- (id)copyWithZone:(NSZone *)zone {}
+#pragma mark - Accessors
 
-#pragma mark - NSObject
+-(void)setCustomProperty:(id)value {}
+-(id)customProperty {}
 
-- (NSString *)description {}
+#pragma mark - Dealloc
+
+- (void)dealloc {}
 ```
 
 ## Spacing
