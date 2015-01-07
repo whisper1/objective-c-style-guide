@@ -122,14 +122,15 @@ Use `#pragma mark -` to categorize methods in functional groupings and protocol/
 
 ## Spacing
 
-* Indent using 2 spaces (this conserves space in print and makes line wrapping less likely). Never indent with tabs. Be sure to set this preference in Xcode.
-* Method braces and other braces (`if`/`else`/`switch`/`while` etc.) always open on the same line as the statement but close on a new line.
+* Indent using 4 spaces. Make sure this preference is set in Xcode.
+* Method braces and other braces (`if`/`else`/`switch`/`while` etc.) always open on the same line as the statement but close on a new line, with any subsequent conditionals placed on a new line
 
 **Preferred:**
 ```objc
 if (user.isHappy) {
   //Do something
-} else {
+} 
+else {
   //Do something else
 }
 ```
@@ -139,8 +140,7 @@ if (user.isHappy) {
 if (user.isHappy)
 {
     //Do something
-}
-else {
+} else {
     //Do something else
 }
 ```
@@ -197,20 +197,24 @@ UIButton *settingsButton;
 UIButton *setBut;
 ```
 
-A three letter prefix should always be used for class names and constants, however may be omitted for Core Data entity names. For any official raywenderlich.com books, starter kits, or tutorials, the prefix 'RWT' should be used.
+The prefix `W` should always be used for class names and constants, however may be omitted for Core Data entity names.
 
-Constants should be camel-case with all words capitalized and prefixed by the related class name for clarity.
+Constants should be camel-case with all words capitalized and prefixed by the related class name for clarity. When implementing mocks, any UI constant values (dimensions, color values, animation durations) should not be hardcoded, but declared as constants in the implementation file. *Exception: In the case of different RGB values, those may be hardcoded until we devise some sort of tuple scheme.*
+
+Double values should always have a decimal and should end in `0`. Float values should always have a decimal and end in `0f`.
 
 **Preferred:**
 
 ```objc
-static NSTimeInterval const RWTTutorialViewControllerNavigationFadeAnimationDuration = 0.3;
+static NSTimeInterval const WInboxViewControllerAnimationTransitionDuration = 0.30;
+static CGFloat const WInboxViewControllerDefaultTabBarOffset = 60.0f;
 ```
 
 **Not Preferred:**
 
 ```objc
 static NSTimeInterval const fadetime = 1.7;
+static CGFloat const inbox_height = 100;
 ```
 
 Properties should be camel-case with the leading word being lowercase. Use auto-synthesis for properties rather than manual @synthesize statements unless you have good reason.
