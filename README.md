@@ -183,7 +183,7 @@ Block comments should generally be avoided, as code should be as self-documentin
 
 Apple naming conventions should be adhered to wherever possible, especially those related to [memory management rules](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/MemoryMgmt/Articles/MemoryMgmt.html) ([NARC](http://stackoverflow.com/a/2865194/340508)).
 
-Long, descriptive method and variable names are good. They should typically be suffixed by the most important suffixes of the class to which they belong. *Exception: In the interest of brevity/sanity, any view controller properties should omit the term `View`*
+Long, descriptive method and variable names are good. They should typically be suffixed by the most important suffixes of the class to which they belong. *Exception: In the interest of brevity/sanity, any view controller properties should omit the term `View`.*
 
 **Preferred:**
 
@@ -220,13 +220,6 @@ static CGFloat const inbox_height = 100;
 
 Properties should be camel-case with the leading word being lowercase. Use auto-synthesis for properties rather than manual @synthesize statements unless you have good reason.
 
-Property attributes should be in the following order:
-* Atomicity (nonatomic/atomic, but probably nonatomic)
-* Access Permission (readonly/readwrite)
-* Memory Management (strong/weak/assign)
-
-The access permission attribute should always be included in the interface file of a class. The only time it should appear in the private interface of the implementation file is to change the publicly declared permission.
-
 **Preferred:**
 
 ```objc
@@ -247,7 +240,7 @@ Local variables should not contain underscores, nor should they obscure previous
 
 ## Methods
 
-In method signatures, there should **NOT** be a space after the method type (-/+ symbol). There should be a space between the method segments (matching Apple's style). Always include a keyword and be descriptive with the word before the argument which describes the argument. 
+In method signatures, there should **NOT** be a space after the method type (-/+ symbol). There should be a space between the method segments (matching Apple's style). Always include a keyword and be descriptive with the word before the argument which describes the argument.
 
 The usage of the word "and" is reserved. It should not be used for multiple parameters as illustrated in the `initWithWidth:height:` example below.
 
@@ -262,8 +255,8 @@ The usage of the word "and" is reserved. It should not be used for multiple para
 **Not Preferred:**
 
 ```objc
-- (void)setT:(NSString *)text i:(UIImage *)image;
-- (void)sendAction:(SEL)aSelector :(id)anObject :(BOOL)flag;
+-(void)setT:(NSString*)text i:(UIImage *)image;
+-(void)sendAction:(SEL)aSelector :(id)anObject :(BOOL)flag;
 -(id)taggedView:(NSInteger)tag;
 - (instancetype)initWithWidth:(CGFloat)width andHeight:(CGFloat)height;
 - (instancetype)initWith:(int)width and:(int)height;  // Never do this.
@@ -300,24 +293,29 @@ Direct access to instance variables that 'back' properties should be avoided exc
 
 ## Property Attributes
 
-Property attributes should be explicitly listed, and will help new programmers when reading the code.  The order of properties should be storage then atomicity, which is consistent with automatically generated code when connecting UI elements from Interface Builder.
+Property attributes should be in the following order:
+* Atomicity (nonatomic/atomic, but probably nonatomic)
+* Access Permission (readonly/readwrite)
+* Memory Management (strong/weak/assign)
+
+The access permission attribute should always be included in the interface file of a class. The only time it should appear in the private interface of the implementation file is to change the publicly declared permission.
 
 **Preferred:**
 
 ```objc
-@property (weak, nonatomic) IBOutlet UIView *containerView;
-@property (strong, nonatomic) NSString *tutorialName;
+@property (nonatomic, readonly, strong) NSString *tutorialName;
+@property (nonatomic, assign) NSUInteger pageNumber;
 ```
 
 **Not Preferred:**
 
 ```objc
-@property (nonatomic, weak) IBOutlet UIView *containerView;
-@property (nonatomic) NSString *tutorialName;
+@property (weak, nonatomic) UIView *containerView;
+@property (nonatomic) NSString* tutorialName;
 ```
 
 Properties with mutable counterparts (e.g. NSString) should prefer `copy` instead of `strong`. 
-Why? Even if you declared a property as `NSString` somebody might pass in an instance of an `NSMutableString` and then change it without you noticing that.  
+Why? Even if you declared a property as `NSString` somebody might pass in an instance of an `NSMutableString` and then change it without you noticing that. *Exception: Pretty much all of our code. Don't set mutable counterparts when the property calls for the nonmutable version.*
 
 **Preferred:**
 
