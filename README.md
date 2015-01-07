@@ -317,49 +317,41 @@ The access permission attribute should always be included in the interface file 
 Properties with mutable counterparts (e.g. NSString) should prefer `copy` instead of `strong`. 
 Why? Even if you declared a property as `NSString` somebody might pass in an instance of an `NSMutableString` and then change it without you noticing that. *Exception: Pretty much all of our code. Don't set mutable counterparts when the property calls for the nonmutable version.*
 
-**Preferred:**
-
-```objc
-@property (copy, nonatomic) NSString *tutorialName;
-```
-
-**Not Preferred:**
-
-```objc
-@property (strong, nonatomic) NSString *tutorialName;
-```
-
 ## Dot-Notation Syntax
 
 Dot syntax is purely a convenient wrapper around accessor method calls. When you use dot syntax, the property is still accessed or changed using getter and setter methods.  Read more [here](https://developer.apple.com/library/ios/documentation/cocoa/conceptual/ProgrammingWithObjectiveC/EncapsulatingData/EncapsulatingData.html)
 
-Dot-notation should **always** be used for accessing and mutating properties, as it makes code more concise. Bracket notation is preferred in all other instances.
+Within a classes implementation file, dot-notation should only be used for accessing and mutating properties when the automatically generated accessors have been overridden. In other contexts, dot syntax is preferred whenever accessing or mutating properties, unless doing so would interrupt a series of brackets. In some instances, dot syntax is appropriate when calling a method of an instance variable (e.g. `arrayOfThings.count`). This is purely at the discretion of Sr. Manuel Gomez, and he has yielded his power of objectivec to Mr. Paul Fleiner.
 
 **Preferred:**
 ```objc
-NSInteger arrayCount = [self.array count];
+NSInteger arrayCount = _array.count;
 view.backgroundColor = [UIColor orangeColor];
-[UIApplication sharedApplication].delegate;
+WAppDelegate *appDelegate = (WAppDelegate *)[[UIApplication sharedApplication] delegate];
 ```
 
 **Not Preferred:**
 ```objc
-NSInteger arrayCount = self.array.count;
+NSInteger arrayCount = [self.array count];
 [view setBackgroundColor:[UIColor orangeColor]];
 UIApplication.sharedApplication.delegate;
+[UIApplication sharedApplication].delegate;
 ```
 
 ## Literals
 
-`NSString`, `NSDictionary`, `NSArray`, and `NSNumber` literals should be used whenever creating immutable instances of those objects. Pay special care that `nil` values can not be passed into `NSArray` and `NSDictionary` literals, as this will cause a crash.
+`NSString`, `NSDictionary`, `NSArray`, and `NSNumber` literals should be used whenever creating immutable instances of those objects. Pay special care that `nil` values can not be passed into `NSArray` and `NSDictionary` literals, as this will cause a crash. Collection literals should only contain spaces after commas that separate elements.
 
 **Preferred:**
 
 ```objc
 NSArray *names = @[@"Brian", @"Matt", @"Chris", @"Alex", @"Steve", @"Paul"];
-NSDictionary *productManagers = @{@"iPhone": @"Kate", @"iPad": @"Kamal", @"Mobile Web": @"Bill"};
+NSDictionary *productManagers = @{@"iPhone":@"Kate", @"iPad":@"Kamal", @"Mobile Web":@"Bill"};
 NSNumber *shouldUseLiterals = @YES;
 NSNumber *buildingStreetNumber = @10018;
+
+NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithDictionary:productManagers];
+
 ```
 
 **Not Preferred:**
