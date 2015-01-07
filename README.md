@@ -112,7 +112,7 @@ Use `#pragma mark -` to categorize methods in functional groupings and protocol/
 
 #pragma mark - Accessors
 
--(void)setCustomProperty:(id)value {}
+-(void)setCustomProperty:(id)customProperty {}
 -(id)customProperty {}
 
 #pragma mark - Dealloc
@@ -183,12 +183,13 @@ Block comments should generally be avoided, as code should be as self-documentin
 
 Apple naming conventions should be adhered to wherever possible, especially those related to [memory management rules](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/MemoryMgmt/Articles/MemoryMgmt.html) ([NARC](http://stackoverflow.com/a/2865194/340508)).
 
-Long, descriptive method and variable names are good.
+Long, descriptive method and variable names are good. They should typically be suffixed by the most important suffixes of the class to which they belong. *Exception: In the interest of brevity/sanity, any view controller properties should omit the term `View`*
 
 **Preferred:**
 
 ```objc
 UIButton *settingsButton;
+WSettingsViewController *settingsController;
 ```
 
 **Not Preferred:**
@@ -219,10 +220,17 @@ static CGFloat const inbox_height = 100;
 
 Properties should be camel-case with the leading word being lowercase. Use auto-synthesis for properties rather than manual @synthesize statements unless you have good reason.
 
+Property attributes should be in the following order:
+* Atomicity (nonatomic/atomic, but probably nonatomic)
+* Access Permission (readonly/readwrite)
+* Memory Management (strong/weak/assign)
+
+The access permission attribute should always be included in the interface file of a class. The only time it should appear in the private interface of the implementation file is to change the publicly declared permission.
+
 **Preferred:**
 
 ```objc
-@property (strong, nonatomic) NSString *descriptiveVariableName;
+@property (nonatomic, strong) NSString *descriptiveVariableName;
 ```
 
 **Not Preferred:**
@@ -233,32 +241,30 @@ id varnm;
 
 ### Underscores
 
-When using properties, instance variables should always be accessed and mutated using `self.`. This means that all properties will be visually distinct, as they will all be prefaced with `self.`. 
+When using properties, instance variables should always be accessed and mutated using the autosynthesized, underscore-prefixed name. The use of accessors is reserved for instances in which either setting or getting the variable produces any additional effects.
 
-An exception to this: inside initializers, the backing instance variable (i.e. _variableName) should be used directly to avoid any potential side effects of the getters/setters.
-
-Local variables should not contain underscores.
+Local variables should not contain underscores, nor should they obscure previous definitions in the case of nested scopes.
 
 ## Methods
 
-In method signatures, there should be a space after the method type (-/+ symbol). There should be a space between the method segments (matching Apple's style).  Always include a keyword and be descriptive with the word before the argument which describes the argument.
+In method signatures, there should **NOT** be a space after the method type (-/+ symbol). There should be a space between the method segments (matching Apple's style). Always include a keyword and be descriptive with the word before the argument which describes the argument. 
 
-The usage of the word "and" is reserved.  It should not be used for multiple parameters as illustrated in the `initWithWidth:height:` example below.
+The usage of the word "and" is reserved. It should not be used for multiple parameters as illustrated in the `initWithWidth:height:` example below.
 
 **Preferred:**
 ```objc
-- (void)setExampleText:(NSString *)text image:(UIImage *)image;
-- (void)sendAction:(SEL)aSelector to:(id)anObject forAllCells:(BOOL)flag;
-- (id)viewWithTag:(NSInteger)tag;
-- (instancetype)initWithWidth:(CGFloat)width height:(CGFloat)height;
+-(void)setExampleText:(NSString *)text image:(UIImage *)image;
+-(void)sendAction:(SEL)aSelector to:(id)anObject forAllCells:(BOOL)flag;
+-(id)viewWithTag:(NSInteger)tag;
+-(instancetype)initWithWidth:(CGFloat)width height:(CGFloat)height;
 ```
 
 **Not Preferred:**
 
 ```objc
--(void)setT:(NSString *)text i:(UIImage *)image;
+- (void)setT:(NSString *)text i:(UIImage *)image;
 - (void)sendAction:(SEL)aSelector :(id)anObject :(BOOL)flag;
-- (id)taggedView:(NSInteger)tag;
+-(id)taggedView:(NSInteger)tag;
 - (instancetype)initWithWidth:(CGFloat)width andHeight:(CGFloat)height;
 - (instancetype)initWith:(int)width and:(int)height;  // Never do this.
 ```
