@@ -1,4 +1,4 @@
-# The official Whisper Objective-C style guide.
+# The Whisper Objective-C style guide.
 
 This style guide outlines the coding conventions for Whisper.
 
@@ -40,7 +40,6 @@ Here are some of the documents from Apple that informed the style guide. If some
 * [Constants](#constants)
 * [Enumerated Types](#enumerated-types)
 * [Case Statements](#case-statements)
-* [Private Properties](#private-properties)
 * [Booleans](#booleans)
 * [Conditionals](#conditionals)
   * [Ternary Operator](#ternary-operator)
@@ -464,56 +463,7 @@ Braces are not required for case statements, unless enforced by the complier. Wh
 }
 ```
 
-There are times when the same code can be used for multiple cases, and a fall-through should be used. A fall-through is the removal of the 'break' statement for a case thus allowing the flow of execution to pass to the next case value.  A fall-through should be commented for coding clarity.
-
-```objc
-switch (condition) {
-  case 1:
-    // ** fall-through! **
-  case 2:
-    // code executed for values 1 and 2
-    break;
-  default: 
-    // ...
-    break;
-}
-
-```
-
-When using an enumerated type for a switch, 'default' is not needed.   For example:
-
-```objc
-RWTLeftMenuTopItemType menuType = RWTLeftMenuTopItemMain;
-
-switch (menuType) {
-  case RWTLeftMenuTopItemMain:
-    // ...
-    break;
-  case RWTLeftMenuTopItemShows:
-    // ...
-    break;
-  case RWTLeftMenuTopItemSchedule:
-    // ...
-    break;
-}
-```
-
-
-## Private Properties
-
-Private properties should be declared in class extensions (anonymous categories) in the implementation file of a class. Named categories (such as `RWTPrivate` or `private`) should never be used unless extending another class.   The Anonymous category can be shared/exposed for testing using the <headerfile>+Private.h file naming convention.
-
-**For Example:**
-
-```objc
-@interface RWTDetailViewController ()
-
-@property (strong, nonatomic) GADBannerView *googleAdView;
-@property (strong, nonatomic) ADBannerView *iAdView;
-@property (strong, nonatomic) UIWebView *adXWebView;
-
-@end
-```
+A fall-through is the removal of the 'break' statement for a case thus allowing the flow of execution to pass to the next case value.  A fall-through should be commented for coding clarity. **Note: Honestly, fall-throughs may reduce the number of lines of code, but they're really difficult to catch when something goes wrong. There are a number of them currently in the code, but let's not add any more, and eventually get to removing the ones that are there.**
 
 ## Booleans
 
