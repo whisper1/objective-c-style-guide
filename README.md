@@ -475,7 +475,7 @@ This allows for more consistency across files and greater visual clarity.
 
 ```objc
 if (someObject) {}
-if (![anotherObject boolValue]) {}
+if (!anotherObject.boolValue) {}
 ```
 
 **Not Preferred:**
@@ -487,10 +487,10 @@ if (isAwesome == YES) {} // Never do this.
 if (isAwesome == true) {} // Never do this.
 ```
 
-If the name of a `BOOL` property is expressed as an adjective, the property can omit the “is” prefix but specifies the conventional name for the get accessor, for example:
+If the name of a `BOOL` property is expressed as an adjective, the property should omit the “is” prefix, but specify the conventional name for the get accessor (unless the property is private and there is no custom getter implemented), for example:
 
 ```objc
-@property (assign, getter=isEditable) BOOL editable;
+@property (nonatomic, readonly, assign, getter=isEditable) BOOL editable;
 ```
 Text and example taken from the [Cocoa Naming Guidelines](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CodingGuidelines/Articles/NamingIvarsAndTypes.html#//apple_ref/doc/uid/20001284-BAJGIIJE).
 
@@ -537,12 +537,22 @@ result = isHorizontal ? x : y;
 result = a > b ? x = c > d ? c : d : y;
 ```
 
+Note that if you want to ensure something exists and use another value if it doesn't, you can simplify this:
+```objc
+NSString *message = responseDictionary[@"error"] ? responseDictionary[@"error"] : defaultError;
+```
+into this:
+```objc
+NSString *message = responseDictionary[@"error"] ?: defaultError;
+```
+
 ## Init Methods
 
 Init methods should follow the convention provided by Apple's generated code template.  A return type of 'instancetype' should also be used instead of 'id'.
 
 ```objc
-- (instancetype)init {
+-(instancetype)init 
+{
   self = [super init];
   if (self) {
     // ...
