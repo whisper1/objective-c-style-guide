@@ -50,7 +50,6 @@ Here are some of the documents from Apple that informed the style guide. If some
 * [Error handling](#error-handling)
 * [Singletons](#singletons)
 * [Line Breaks](#line-breaks)
-* [Smiley Face](#smiley-face)
 * [Xcode Project](#xcode-project)
 
 
@@ -548,13 +547,12 @@ NSString *message = responseDictionary[@"error"] ?: defaultError;
 
 ## Init Methods
 
-Init methods should follow the convention provided by Apple's generated code template.  A return type of 'instancetype' should also be used instead of 'id'.
+A return type of 'instancetype' should also be used instead of 'id'.
 
 ```objc
 -(instancetype)init 
 {
-  self = [super init];
-  if (self) {
+  if (self = [super init]) {
     // ...
   }
   return self;
@@ -568,8 +566,10 @@ See [Class Constructor Methods](#class-constructor-methods) for link to article 
 Where class constructor methods are used, these should always return type of 'instancetype' and never 'id'. This ensures the compiler correctly infers the result type. 
 
 ```objc
-@interface Airplane
-+ (instancetype)airplaneWithType:(RWTAirplaneType)type;
+@interface WFeed
+
++(instancetype)feedWithFeedSource:(WFeedSource *)feedSource;
+
 @end
 ```
 
@@ -586,11 +586,11 @@ When accessing the `x`, `y`, `width`, or `height` of a `CGRect`, always use the 
 ```objc
 CGRect frame = self.view.frame;
 
-CGFloat x = CGRectGetMinX(frame);
-CGFloat y = CGRectGetMinY(frame);
+CGFloat xCoordinate = CGRectGetMinX(frame);
+CGFloat yCoordinate = CGRectGetMinY(frame);
 CGFloat width = CGRectGetWidth(frame);
 CGFloat height = CGRectGetHeight(frame);
-CGRect frame = CGRectMake(0.0, 0.0, width, height);
+CGRect frame = CGRectMake(0.0f, 0.0f, width, height);
 ```
 
 **Not Preferred:**
@@ -612,8 +612,9 @@ When coding with conditionals, the left hand margin of the code should be the "g
 **Preferred:**
 
 ```objc
-- (void)someMethod {
-  if (![someOther boolValue]) {
+-(void)someMethod 
+{
+  if (!someOther.boolValue) {
 	return;
   }
 
@@ -624,7 +625,8 @@ When coding with conditionals, the left hand margin of the code should be the "g
 **Not Preferred:**
 
 ```objc
-- (void)someMethod {
+-(void)someMethod 
+{
   if ([someOther boolValue]) {
     //Do something important
   }
@@ -659,12 +661,12 @@ Some of Apple’s APIs write garbage values to the error parameter (if non-NULL)
 
 Singleton objects should use a thread-safe pattern for creating their shared instance.
 ```objc
-+ (instancetype)sharedInstance {
++(instancetype)sharedInstance
+{
   static id sharedInstance = nil;
-
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-    sharedInstance = [[self alloc] init];
+    sharedInstance = [self new];
   });
 
   return sharedInstance;
@@ -681,27 +683,6 @@ For example:
 ```objc
 self.productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productIdentifiers];
 ```
-A long line of code like this should be carried on to the second line adhering to this style guide's Spacing section (two spaces).
-```objc
-self.productsRequest = [[SKProductsRequest alloc] 
-  initWithProductIdentifiers:productIdentifiers];
-```
-
-
-## Smiley Face
-
-Smiley faces are a very prominent style feature of the raywenderlich.com site!  It is very important to have the correct smile signifying the immense amount of happiness and excitement for the coding topic.  The end square bracket is used because it represents the largest smile able to be captured using ascii art.  A half-hearted smile is represented if an end parenthesis is used, and thus not preferred.
-
-**Preferred:**
-```objc
-:]
-```
-
-**Not Preferred:**
-```objc
-:)
-```  
-
 
 ## Xcode project
 
